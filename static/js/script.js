@@ -1,371 +1,328 @@
-$(window).on("load", function () {
+(function ($) {
+	'use strict';
 
-    "use strict";
-    /* ===================================
-            Loading Timeout
-     ====================================== */
+	/* ========================================================================= */
+	/*	Page Preloader
+	/* ========================================================================= */
 
-    $('.side-menu').removeClass('hidden');
+	$(window).on('load', function () {
+		$('.preloader').fadeOut(700);
+	});
 
-    setTimeout(function(){
-        $('.loader-bg').fadeToggle();
+	/* ========================================================================= */
+	/*	Post image slider
+	/* ========================================================================= */
 
-    }, 1500);
+	$('#post-thumb, #gallery-post').slick({
+		infinite: true,
+		arrows: false,
+		autoplay: true,
+		autoplaySpeed: 4000
 
-    // $('.navbar-collapse .navbar-nav .nav-link:nth-child(1)').addClass('active');
-    $('.navbar-collapse .navbar-nav .nav-link:nth-child(2)').removeClass('active');
+	});
+
+	$('#features').slick({
+		infinite: true,
+		arrows: false,
+		autoplay: true,
+		autoplaySpeed: 4000
+	});
+
+
+	/* ========================================================================= */
+	/*	Menu item highlighting
+	/* ========================================================================= */
+
+
+	$('#navigation').sticky({
+		topSpacing: 0
+	});
+
+
+	/* ========================================================================= */
+	/*	Magnific popup
+	/* =========================================================================  */
+	$('.image-popup').magnificPopup({
+		type: 'image',
+		removalDelay: 160, //delay removal by X to allow out-animation
+		callbacks: {
+			beforeOpen: function () {
+				// just a hack that adds mfp-anim class to markup
+				this.st.image.markup = this.st.image.markup.replace('mfp-figure', 'mfp-figure mfp-with-anim');
+				this.st.mainClass = this.st.el.attr('data-effect');
+			}
+		},
+		closeOnContentClick: true,
+		midClick: true,
+		fixedContentPos: false,
+		fixedBgPos: true
+	});
+
+
+
+	//   magnific popup video
+	$('.popup-video').magnificPopup({
+		disableOn: 700,
+		type: 'iframe',
+		mainClass: 'mfp-zoom-in',
+		removalDelay: 160,
+		preloader: false,
+		fixedContentPos: true
+	});
+	/* ========================================================================= */
+	/*	Portfolio Filtering Hook
+	/* =========================================================================  */
+
+	$(document).ready(function () {
+		var containerEl = document.querySelector('.filtr-container');
+		var filterizd;
+		if (containerEl) {
+			filterizd = $('.filtr-container').filterizr({});
+		}
+		//Active changer
+		$('.portfolio-filter button').on('click', function () {
+			$('.portfolio-filter button').removeClass('active');
+			$(this).addClass('active');
+		});
+	});
+
+	/* ========================================================================= */
+	/*	Testimonial Carousel
+	/* =========================================================================  */
+
+	//Init the carousel
+	$('#testimonials').slick({
+		infinite: true,
+		arrows: false,
+		autoplay: true,
+		autoplaySpeed: 4000
+	});
+
+
+
+
+
+	/* ========================================================================= */
+	/*   Contact Form Validating
+	/* ========================================================================= */
+
+
+	$('#contact-submit').click(function (e) {
+
+		//stop the form from being submitted
+		e.preventDefault();
+
+		/* declare the variables, var error is the variable that we use on the end
+		to determine if there was an error or not */
+		var error = false;
+		var name = $('#name').val();
+		var email = $('#email').val();
+		var subject = $('#subject').val();
+		var message = $('#message').val();
+
+		/* in the next section we do the checking by using VARIABLE.length
+		where VARIABLE is the variable we are checking (like name, email),
+		length is a JavaScript function to get the number of characters.
+		And as you can see if the num of characters is 0 we set the error
+		variable to true and show the name_error div with the fadeIn effect. 
+		if it's not 0 then we fadeOut the div( that's if the div is shown and
+		the error is fixed it fadesOut. 
+		
+		The only difference from these checks is the email checking, we have
+		email.indexOf('@') which checks if there is @ in the email input field.
+		This JavaScript function will return -1 if no occurrence have been found.*/
+		if (name.length === 0) {
+			var error = true;
+			$('#name').css('border-color', '#D8000C');
+		} else {
+			$('#name').css('border-color', '#666');
+		}
+		if (email.length === 0 || email.indexOf('@') === '-1') {
+			var error = true;
+			$('#email').css('border-color', '#D8000C');
+		} else {
+			$('#email').css('border-color', '#666');
+		}
+		if (subject.length === 0) {
+			var error = true;
+			$('#subject').css('border-color', '#D8000C');
+		} else {
+			$('#subject').css('border-color', '#666');
+		}
+		if (message.length === 0) {
+			var error = true;
+			$('#message').css('border-color', '#D8000C');
+		} else {
+			$('#message').css('border-color', '#666');
+		}
+
+		//now when the validation is done we check if the error variable is false (no errors)
+		if (error === false) {
+			//disable the submit button to avoid spamming
+			//and change the button text to Sending...
+			$('#contact-submit').attr({
+				'disabled': 'false',
+				'value': 'Sending...'
+			});
+
+			/* using the jquery's post(ajax) function and a lifesaver
+			function serialize() which gets all the data from the form
+			we submit it to send_email.php */
+			$.post('sendmail.php', $('#contact-form').serialize(), function (result) {
+				//and after the ajax request ends we check the text returned
+				if (result === 'sent') {
+					//if the mail is sent remove the submit paragraph
+					$('#cf-submit').remove();
+					//and show the mail success div with fadeIn
+					$('#mail-success').fadeIn(500);
+				} else {
+					//show the mail failed div
+					$('#mail-fail').fadeIn(500);
+					//re enable the submit button by removing attribute disabled and change the text back to Send The Message
+					$('#contact-submit').removeAttr('disabled').attr('value', 'Send The Message');
+				}
+			});
+		}
+	});
+
+})(jQuery);
+// End Jquery Function
+
+
+/* ========================================================================= */
+/*	Animated section
+/* ========================================================================= */
+
+var wow = new WOW({
+	offset: 100, // distance to the element when triggering the animation (default is 0)
+	mobile: false // trigger animations on mobile devices (default is true)
 });
+wow.init();
 
-jQuery(function ($) {
 
-    "use strict";
+/* ========================================================================= */
+/*	Smooth Scroll
+/* ========================================================================= */
+var scroll = new SmoothScroll('a[href*=\'#\']');
 
-    $(window).on('scroll', function () {
-        if ($(this).scrollTop() > 260) { // Set position from top to add class
-            $('header').addClass('header-appear');
-        }
-        else {
-            $('header').removeClass('header-appear');
-        }
-    });
 
-    //scroll to appear
-    $(window).on('scroll', function () {
-        if ($(this).scrollTop() > 500)
-            $('.scroll-top-arrow').fadeIn('slow');
-        else
-            $('.scroll-top-arrow').fadeOut('slow');
-    });
 
-    //Click event to scroll to top
-    $(document).on('click', '.scroll-top-arrow', function () {
-        $('html, body').animate({scrollTop: 0}, 800);
-        return false;
-    });
+/* ========================================================================= */
+/*	Google Map Customization
+/* =========================================================================  */
 
-    $(".scroll").on("click", function (event) {
-        event.preventDefault();
-        $("html,body").animate({
-            scrollTop: $(this.hash).offset().top - 60}, 1200);
-    });
+function initialize() {
+	'use strict';
 
-    $(".slider-btn").on("click", function (event) {
-        event.preventDefault();
-        $("html,body").animate({
-            scrollTop: $(this.hash).offset().top - 60}, 1200);
-    });
+	var myLatLng = new google.maps.LatLng(22.333851, 91.812256);
 
-    /* ===================================
-        Side Menu
-    ====================================== */
+	var roadAtlasStyles = [{
+		'featureType': 'landscape',
+		'elementType': 'geometry.fill',
+		'stylers': [{
+			'color': '#2F3238'
+		}]
+	}, {
+		'elementType': 'labels.text.fill',
+		'stylers': [{
+			'color': '#FFFFFF'
+		}]
+	}, {
+		'elementType': 'labels.text.stroke',
+		'stylers': [{
+			'visibility': 'off'
+		}]
+	}, {
+		'featureType': 'road',
+		'elementType': 'geometry.fill',
+		'stylers': [{
+			'color': '#50525f'
+		}]
+	}, {
+		'featureType': 'road',
+		'elementType': 'geometry.stroke',
+		'stylers': [{
+			'visibility': 'on'
+		}, {
+			'color': '#808080'
+		}]
+	}, {
+		'featureType': 'poi',
+		'elementType': 'labels',
+		'stylers': [{
+			'visibility': 'off'
+		}]
+	}, {
+		'featureType': 'transit',
+		'elementType': 'labels.icon',
+		'stylers': [{
+			'visibility': 'off'
+		}]
+	}, {
+		'featureType': 'poi',
+		'elementType': 'geometry',
+		'stylers': [{
+			'color': '#808080'
+		}]
+	}, {
+		'featureType': 'water',
+		'elementType': 'geometry.fill',
+		'stylers': [{
+			'color': '#3071a7'
+		}, {
+			'saturation': -65
+		}]
+	}, {
+		'featureType': 'road',
+		'elementType': 'labels.icon',
+		'stylers': [{
+			'visibility': 'off'
+		}]
+	}, {
+		'featureType': 'landscape',
+		'elementType': 'geometry.stroke',
+		'stylers': [{
+			'color': '#bbbbbb'
+		}]
+	}];
 
-    if ($("#sidemenu_toggle").length) {
-        $("#sidemenu_toggle").on("click", function () {
-            $(".pushwrap").toggleClass("active");
-            $(".side-menu").addClass("side-menu-active"), $("#close_side_menu").fadeIn(700)
-        }), $("#close_side_menu").on("click", function () {
-            $(".side-menu").removeClass("side-menu-active"), $(this).fadeOut(200), $(".pushwrap").removeClass("active")
-        }), $(".side-nav .navbar-nav .nav-link").on("click", function () {
-            $(".side-menu").removeClass("side-menu-active"), $("#close_side_menu").fadeOut(200), $(".pushwrap").removeClass("active")
-        }), $("#btn_sideNavClose").on("click", function () {
-            $(".side-menu").removeClass("side-menu-active"), $("#close_side_menu").fadeOut(200), $(".pushwrap").removeClass("active")
-        });
-    }
+	var mapOptions = {
+		zoom: 14,
+		center: myLatLng,
+		disableDefaultUI: true,
+		scrollwheel: false,
+		navigationControl: false,
+		mapTypeControl: false,
+		scaleControl: false,
+		draggable: false,
+		mapTypeControlOptions: {
+			mapTypeIds: [google.maps.MapTypeId.ROADMAP, 'roadatlas']
+		}
+	};
 
-    /* ===================================
-         Side Menu Animation
-    ====================================== */
+	var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
-    $(".side-nav .navbar-nav .nav-item .nav-link").on("mouseenter", function () {
-        var value = $(this).text();
-        $("#mega-title .inner-mega-title").addClass('animation-effect').text(value);
-    });
 
-    $(".side-nav .navbar-nav .nav-item .nav-link").on("mouseleave", function () {
-        $("#mega-title .inner-mega-title").removeClass('animation-effect');
-    });
+	var marker = new google.maps.Marker({
+		position: myLatLng,
+		map: map,
+		title: ''
+	});
 
-    $(".side-nav .navbar-nav .nav-item .nav-link").on("click", function () {
-        $('body').addClass('cursor-change');
 
-        setTimeout(function(){
-            $('body').removeClass('cursor-change');
-        }, 1500);
-    });
+	google.maps.event.addListener(marker, 'click', function () {
+		infowindow.open(map, marker);
+	});
 
-    /* ===================================
-       Mouse parallax
-     ====================================== */
+	var styledMapOptions = {
+		name: 'US Road Atlas'
+	};
 
-    $('.slider-section').mousemove(function(e) {
-        $('[data-depth]').each(function () {
-            var depth = $(this).data('depth');
-            var amountMovedX = (e.pageX * -depth/4);
-            var amountMovedY = (e.pageY * -depth/4);
+	var usRoadMapType = new google.maps.StyledMapType(
+		roadAtlasStyles, styledMapOptions);
 
-            $(this).css({
-                'transform':'translate3d(' + amountMovedX +'px,' + amountMovedY +'px, 0)',
-            });
-        });
-    });
+	map.mapTypes.set('roadatlas', usRoadMapType);
+	map.setMapTypeId('roadatlas');
+}
 
-    /* ====================================
-       da-thumb (Portfolio)
-    *==================================== */
-
-    $(function() {
-        $('.da-thumbs > li ').each( function() { $(this).hoverdir(); } );
-    });
-
-    /* =====================================
-        Portfolio-Isotope
-    ====================================== */
-
-    // isotope
-    $('.gallery').isotope({
-        // options
-        itemSelector: '.items'
-    });
-
-    var $gallery = $('.gallery').isotope({
-        // options
-    });
-
-    // filter items on button click
-    $('.filtering').on('click', 'span', function () {
-
-        var filterValue = $(this).attr('data-filter');
-
-        $gallery.isotope({filter: filterValue});
-
-    });
-
-    $('.filtering').on('click', 'span', function () {
-
-        $(this).addClass('active').siblings().removeClass('active');
-
-    });
-
-    setTimeout(function (){
-        $('.filtering .active').click();
-    }, 1500);
-
-    /*===================================
-        Animated Progress Bar
-   ====================================== */
-
-    $(".progress-bar").each(function () {
-        $(this).appear(function () {
-            $(this).animate({width: $(this).attr("aria-valuenow") + "%"}, 2000)
-        });
-    });
-
-    /* =====================================
-             Pricing Active
-   ===================================== */
-    $('.pricing-item').on('mouseenter' , function(){
-        $('.pricing-item').removeClass('active');
-        $(this).addClass('active');
-    }).on('mouseleave' , function(){
-        $('.pricing-item').removeClass('active');
-        $('.pricing-item.selected').addClass('active');
-    });
-
-    /*===================================
-        Go Top Scroll
-   ====================================== */
-    $(function(){
-        // Scroll Event
-        $(window).on('scroll', function(){
-            var scrolled = $(window).scrollTop();
-            if (scrolled > 600) $('.go-top').addClass('active');
-            if (scrolled < 600) $('.go-top').removeClass('active');
-        });
-        // Click Event
-        $('.go-top').on('click', function() {
-            $("html, body").animate({ scrollTop: "0" },  500);
-        });
-    });
-
-    /* =====================================
-          Parallax
-   ====================================== */
-
-    if ($(window).width() > 992) {
-        $(".parallax").parallaxie({
-            speed: 0.55,
-            offset: 0,
-        });
-    }
-
-    /* ===================================
-        WOW Animation
-    ====================================== */
-
-    if ($(window).width() > 991) {
-        var wow = new WOW({
-            boxClass: 'wow',
-            animateClass: 'animated',
-            offset: 0,
-            mobile: false,
-            live: true
-        });
-        new WOW().init();
-    }
-
-    /* ===================================
-         Rotating Text
-     ====================================== */
-
-    if ($(".js-rotating").length) {
-        $(".js-rotating").Morphext({
-            // The [in] animation type. Refer to Animate.css for a list of available animations.
-            animation: "flipInX",
-            // An array of phrases to rotate are created based on this separator. Change it if you wish to separate the phrases differently (e.g. So Simple | Very Doge | Much Wow | Such Cool).
-            separator: ",",
-            // The delay between the changing of each phrase in milliseconds.
-            speed: 3000,
-            complete: function () {
-                // Called after the entrance animation is executed.
-            }
-        });
-    }
-
-    /*===================================
-        Owl Carousel
-    ====================================== */
-
-    /* Progress Owl-Carousel */
-    $(".owl-split").owlCarousel({
-        items: 1,
-        margin: 0,
-        dots: false,
-        nav: false,
-        loop: true,
-        autoplay: true,
-        smartSpeed:500,
-        navSpeed: true,
-        autoplayHoverPause:true,
-        responsiveClass:true
-    });
-
-    //Partner Owl
-    $('.partners-slider').owlCarousel({
-        items: 5,
-        autoplay: 1500,
-        smartSpeed: 1500,
-        autoplayHoverPause: true,
-        slideBy: 1,
-        loop: true,
-        margin: 30,
-        dots: false,
-        nav: false,
-        responsive: {
-            1200: {
-                items: 4,
-            },
-            768: {
-                items: 3,
-            },
-            480: {
-                items: 2,
-            },
-            320: {
-                items: 1,
-            },
-        }
-    });
-
-    //Testimonial Owl
-    $('#testimonial-carousal').owlCarousel({
-        loop:true,
-        margin:10,
-        nav:false,
-        dots:false,
-        autoplay:true,
-        responsive:{
-            0:{
-                items:1
-            },
-            600:{
-                items:1
-            },
-            1000:{
-                items:1
-            }
-        }
-    });
-
-    //modern agency index
-    $("#vertical-bullets").show().revolution({
-        sliderType: "standard",
-        sliderLayout: "fullscreen",
-        scrollbarDrag: "true",
-        dottedOverlay: "none",
-        navigation: {
-            keyboardNavigation: "on",
-            keyboard_direction: "horizontal",
-            mouseScrollNavigation: "off",
-            mouseScrollReverse: "default",
-            onHoverStop: "off",
-            bullets: {
-                enable: true,
-                hide_onmobile: true,
-                hide_under: 769,
-                style: "agency",
-                hide_onleave: false,
-                direction: "vertical",
-                h_align: "left",
-                v_align: "center",
-                h_offset: 30,
-                v_offset: 0,
-                space: 5,
-                tmp: '<div class="tp-bullet-inner"></div><div class="tp-line"></div>'
-            },
-            touch: {
-                touchenabled: "on",
-                swipe_threshold: 75,
-                swipe_min_touches: 1,
-                swipe_direction: "horizontal",
-                drag_block_vertical: false
-            },
-        },
-        viewPort: {
-            enable: true,
-            outof: "pause",
-            visible_area: "90%",
-            presize: true
-        },
-        responsiveLevels: [4096, 1260, 778, 480],
-        visibilityLevels: [4096, 1260, 778, 480],
-        gridwidth: [1140, 1024, 750, 480],
-        gridheight: [600, 500, 500, 350],
-        lazyType: "none",
-        parallax: {
-            type: "mouse",
-            origo: "enterpoint",
-            speed: 400,
-            speedbg: 0,
-            speedls: 0,
-            levels: [2, 3, 5, 10, 25, 30, 35, 40, 45, 46, 47, 48, 49, 50, 51, 55],
-            disable_onmobile: "on"
-        },
-        shadow: 0,
-        spinner: "off",
-        stopLoop: "off",
-        stopAfterLoops: -1,
-        stopAtSlide: -1,
-        shuffle: "off",
-        autoHeight: "off",
-        hideThumbsOnMobile: "off",
-        hideSliderAtLimit: 0,
-        hideCaptionAtLimit: 360,
-        hideAllCaptionAtLilmit: 360,
-        debugMode: false,
-        fallbacks: {
-            simplifyAll: "on",
-            nextSlideOnWindowFocus: "off",
-            disableFocusListener: false,
-        }
-    });
-});
+google.maps.event.addDomListener(window, 'load', initialize);
